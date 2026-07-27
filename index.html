@@ -104,6 +104,10 @@
     position:relative;
     z-index:1;
   }
+  .hero h1 .for,
+  .hero h1 .name{
+    white-space:nowrap;
+  }
   .hero .name{
     color:var(--gold);
   }
@@ -133,6 +137,12 @@
   @media (max-width:760px){
     .cards{grid-template-columns:1fr; margin-top:-32px;}
     .hero{padding:56px 20px 72px;}
+  }
+  @media (max-width:600px){
+    .hero h1 .sep{display:none;}
+    .hero h1 .for,
+    .hero h1 .name{display:block;}
+    .hero h1{line-height:1.25;}
   }
 
   .card{
@@ -242,8 +252,8 @@
   <div class="hero">
     <img class="hero-avatar" src="maksim.jpg" alt="Максим Денисов">
     <div class="eyebrow">Тестовое задание</div>
-    <h1>Для MIPIF · <span class="name">Максим Денисов</span></h1>
-    <p class="sub">Аудит контент-стратегии и рекомендации для двух Telegram-каналов. Ниже — оба документа, каждый открывается в отдельной вкладке.</p>
+    <h1><span class="for">Для MIPIF</span><span class="sep"> · </span><span class="name">Максим Денисов</span></h1>
+    <p class="sub">Аудит контент-стратегии и рекомендации для двух Telegram-каналов. Ниже — оба документа.</p>
   </div>
 
   <div class="wrap">

@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>MIPIF — контент-стратегия Telegram-канала</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --text:#37352F;
+    --text-light:#787774;
+    --border:#E9E9E7;
+    --page-bg:#FBFBFA;
+
+    --blue-bg:#DBEDFB; --blue-tx:#0B6E99;
+    --green-bg:#DDEDEA; --green-tx:#448361;
+    --orange-bg:#FBECDD; --orange-tx:#CB912F;
+    --red-bg:#FBE4E4;   --red-tx:#D44C47;
+    --purple-bg:#EAE4F2;--purple-tx:#6940A5;
+    --gray-bg:#F1F1EF;  --gray-tx:#787774;
+    --yellow-bg:#FBF3DB; --yellow-tx:#9F6B00;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--page-bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    font-size:16px;
+    line-height:1.6;
+  }
+  .page{
+    max-width:880px;
+    margin:0 auto;
+    padding:64px 48px 120px;
+  }
+  .icon-title{font-size:44px; margin-bottom:4px;}
+  h1{
+    font-size:34px;
+    font-weight:700;
+    margin:0 0 6px 0;
+    letter-spacing:-0.01em;
+  }
+  .subtitle{
+    color:var(--text-light);
+    font-size:16px;
+    margin-bottom:28px;
+  }
+  .meta-row{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:40px;
+  }
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:3px 10px;
+    border-radius:5px;
+    font-size:13px;
+    font-weight:500;
+    background:var(--gray-bg);
+    color:var(--gray-tx);
+  }
+  .pill.blue{background:var(--blue-bg); color:var(--blue-tx);}
+  .pill.green{background:var(--green-bg); color:var(--green-tx);}
+  .pill.orange{background:var(--orange-bg); color:var(--orange-tx);}
+  .pill.red{background:var(--red-bg); color:var(--red-tx);}
+  .pill.purple{background:var(--purple-bg); color:var(--purple-tx);}
+  .pill.yellow{background:var(--yellow-bg); color:var(--yellow-tx);}
+
+  hr.divider{
+    border:none;
+    border-top:1px solid var(--border);
+    margin:40px 0;
+  }
+
+  h2{
+    font-size:22px;
+    font-weight:700;
+    margin:0 0 16px 0;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  h2 .num{
+    color:var(--text-light);
+    font-weight:600;
+    font-size:15px;
+    background:var(--gray-bg);
+    border-radius:5px;
+    padding:2px 8px;
+  }
+  h3{
+    font-size:16px;
+    font-weight:600;
+    margin:24px 0 8px 0;
+  }
+  p{margin:0 0 12px 0;}
+  ul{margin:0 0 12px 0; padding-left:22px;}
+  li{margin-bottom:4px;}
+
+  .callout{
+    display:flex;
+    gap:12px;
+    background:var(--gray-bg);
+    border-radius:6px;
+    padding:16px 18px;
+    margin:16px 0;
+  }
+  .callout .emoji{font-size:20px; line-height:1.4;}
+  .callout.blue{background:var(--blue-bg);}
+  .callout.green{background:var(--green-bg);}
+  .callout.orange{background:var(--orange-bg);}
+  .callout p{margin:0;}
+
+  .toggle{
+    border:1px solid var(--border);
+    border-radius:6px;
+    margin:14px 0;
+    overflow:hidden;
+  }
+  .toggle summary{
+    cursor:pointer;
+    padding:12px 16px;
+    font-weight:600;
+    background:#fff;
+    list-style:none;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .toggle summary::-webkit-details-marker{display:none;}
+  .toggle summary::before{
+    content:"▸";
+    color:var(--text-light);
+    transition:transform .15s ease;
+    display:inline-block;
+    font-size:13px;
+  }
+  .toggle[open] summary::before{transform:rotate(90deg);}
+  .toggle .toggle-body{
+    padding:0 16px 16px 16px;
+    border-top:1px solid var(--border);
+    padding-top:12px;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin:16px 0 24px;
+    font-size:14.5px;
+  }
+  th,td{
+    border:1px solid var(--border);
+    padding:10px 12px;
+    text-align:left;
+    vertical-align:top;
+  }
+  th{
+    background:var(--gray-bg);
+    font-weight:600;
+    font-size:13px;
+    color:var(--text-light);
+    text-transform:uppercase;
+    letter-spacing:.03em;
+  }
+  tr:hover td{background:#FAFAF9;}
+
+  .tag{
+    display:inline-block;
+    padding:2px 8px;
+    border-radius:4px;
+    font-size:12.5px;
+    font-weight:600;
+    white-space:nowrap;
+  }
+  .tag.high{background:var(--red-bg); color:var(--red-tx);}
+  .tag.med{background:var(--orange-bg); color:var(--orange-tx);}
+  .tag.low{background:var(--green-bg); color:var(--green-tx);}
+
+  /* funnel matrix */
+  .matrix-wrap{overflow-x:auto;}
+  .matrix{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13.5px;
+    min-width:760px;
+  }
+  .matrix th, .matrix td{
+    border:1px solid var(--border);
+    padding:10px;
+    text-align:center;
+  }
+  .matrix th{background:var(--gray-bg); font-weight:600; font-size:12.5px;}
+  .matrix td.stage-label{
+    text-align:left;
+    font-weight:600;
+    background:#fff;
+    white-space:nowrap;
+  }
+  .cell{
+    border-radius:5px;
+    padding:8px 4px;
+    font-size:12px;
+    font-weight:600;
+    display:block;
+  }
+  .cell.strong{background:var(--green-bg); color:var(--green-tx);}
+  .cell.weak{background:var(--yellow-bg); color:var(--yellow-tx);}
+  .cell.gap{background:var(--red-bg); color:var(--red-tx);}
+  .cell.na{background:#fff; color:#D8D8D5;}
+
+  .legend{
+    display:flex;
+    gap:18px;
+    flex-wrap:wrap;
+    margin:8px 0 24px;
+    font-size:13px;
+    color:var(--text-light);
+  }
+  .legend span{display:inline-flex; align-items:center; gap:6px;}
+  .dot{width:10px; height:10px; border-radius:50%; display:inline-block;}
+  .dot.strong{background:var(--green-tx);}
+  .dot.weak{background:var(--yellow-tx);}
+  .dot.gap{background:var(--red-tx);}
+
+  .example-post{
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:18px 20px;
+    background:#fff;
+    margin:12px 0;
+    font-size:14.5px;
+  }
+  .example-post .post-tag{
+    display:inline-block;
+    background:var(--purple-bg);
+    color:var(--purple-tx);
+    font-size:12px;
+    font-weight:600;
+    padding:2px 8px;
+    border-radius:4px;
+    margin-bottom:10px;
+  }
+
+  .toc{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:20px 24px;
+    margin-bottom:40px;
+  }
+  .toc-title{font-weight:600; margin-bottom:10px; font-size:14px; color:var(--text-light); text-transform:uppercase; letter-spacing:.04em;}
+  .toc ol{margin:0; padding-left:20px;}
+  .toc a{color:var(--text); text-decoration:none;}
+  .toc a:hover{text-decoration:underline;}
+  .toc li{margin-bottom:6px;}
+
+  section{margin-bottom:8px;}
+  .footer-note{
+    margin-top:60px;
+    padding-top:20px;
+    border-top:1px solid var(--border);
+    color:var(--text-light);
+    font-size:13px;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="icon-title">📊</div>
+  <h1>MIPIF — стратегия развития Telegram-канала</h1>
+  <div class="subtitle">Аудит контент-модели, разрывы в воронке аудитории, рекомендации и стратегия продвижения</div>
+
+  <div class="meta-row">
+    <span class="pill blue">Канал: @mipif</span>
+    <span class="pill">10.2K подписчиков</span>
+    <span class="pill green">Тестовое задание</span>
+  </div>
+
+  <div class="toc">
+    <div class="toc-title">Содержание</div>
+    <ol>
+      <li><a href="#summary">Executive Summary</a></li>
+      <li><a href="#context">Контекст бизнеса</a></li>
+      <li><a href="#goal">Цель канала</a></li>
+      <li><a href="#audience">Аудитория и сегменты</a></li>
+      <li><a href="#rubrics">Аудит текущих рубрик</a></li>
+      <li><a href="#matrix">Матрица покрытия воронки</a></li>
+      <li><a href="#recs">Рекомендации</a></li>
+      <li><a href="#example">Пример применения</a></li>
+      <li><a href="#ads">Продвижение через Telegram Ads</a></li>
+      <li><a href="#roadmap">Дорожная карта развития</a></li>
+    </ol>
+  </div>
+
+  <hr class="divider">
+
+  <section id="summary">
+    <h2><span class="num">01</span> Executive Summary</h2>
+    <div class="callout blue">
+      <div class="emoji">💡</div>
+      <p>Канал сильно закрывает <b>середину пути инвестора</b> — сравнение стран и снятие тревоги перед покупкой (аналитика, эфиры, новости). Но структурно не закрыты <b>края воронки</b>: вход для новичков, забота о тех, кто уже купил, и живое соцдоказательство от обычных инвесторов, а не от экспонентов. Рекомендации ниже не меняют существующую модель — они точечно закрывают эти три разрыва и добавляют осознанную «пульсирующую» логику B2B-контента перед продажей стендов.</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section id="context">
+    <h2><span class="num">02</span> Контекст бизнеса</h2>
+    <p>MIPIF — серия офлайн-выставок недвижимости в Москве и Санкт-Петербурге, с экосистемой из онлайн-платформы MIPIF 365, Telegram-канала и экспертного сообщества. С 2017 года на рынке, организатор — структура основателя Дмитрия Саватеева (RPGmedia / Realty Promotion Group).</p>
+    <div class="toggle">
+      <summary>Как компания зарабатывает</summary>
+      <div class="toggle-body">
+        <ul>
+          <li>Основной доход — <b>продажа стендов экспонентам</b> (застройщики, агентства, ВНЖ-консультанты и др.)</li>
+          <li>Билеты для частных посетителей — <b>бесплатные</b> по регистрации</li>
+          <li>Дополнительно — партнёрские/спонсорские интеграции</li>
+        </ul>
+        <p style="margin-top:10px;">Отсюда ключевой вывод для контент-стратегии: Telegram-канал не продаёт билеты — он продаёт <b>доверие</b>, которое конвертируется в продажи стендов через демонстрацию живого потока инвесторов.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section id="goal">
+    <h2><span class="num">03</span> Цель канала</h2>
+    <div class="callout green">
+      <div class="emoji">🎯</div>
+      <p><b>Контент → тёплый частный инвестор → приходит на выставку/эфир → покупает у экспонента.</b><br>
+      Тот же видимый поток инвесторов служит соцдоказательством ROI для экспонентов → продажа стендов на следующую выставку — основная статья выручки MIPIF.</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section id="audience">
+    <h2><span class="num">04</span> Аудитория и сегменты</h2>
+    <p><b>Ядро — частный инвестор</b> (зарубежная/курортная недвижимость, доход, диверсификация, ВНЖ). <b>Вторичная аудитория — экспоненты и партнёры</b> (девелоперы, агентства, ВНЖ/юр. консультанты, финтех, управляющие компании, фонды коллективных инвестиций).</p>
+
+    <h3>Сегменты внутри ядра — частные инвесторы</h3>
+    <table>
+      <tr><th>Сегмент</th><th>Ключевая боль / логика</th><th>Маркер из канала</th><th>Этап воронки</th></tr>
+      <tr><td>Инвестор в зарубежную недвижимость</td><td>Считает реальную доходность, сравнивает страны, скептичен к завышенным обещаниям</td><td>«не обещаем 15–30%, но честно», чек-листы по проверке доходности</td><td><span class="tag med">2</span></td></tr>
+      <tr><td>Инвестор в недвижимость РФ (курортная/коммерческая)</td><td>Не выводит или не может выводить капитал за рубеж — рублёвая доходность и локальный рынок</td><td>«Таиланд, Пятигорск, Агой или коммерция Москвы?»</td><td><span class="tag med">2</span></td></tr>
+      <tr><td>Ищущий паспорт / ВНЖ</td><td>Недвижимость — инструмент, не цель. Триггер — регуляторика и статус, а не доходность</td><td>«план Б», «второй паспорт», кейс Сан-Томе и Принсипи</td><td><span class="tag med">2–3</span></td></tr>
+    </table>
+
+    <div class="callout orange">
+      <div class="emoji">💡</div>
+      <p><b>Важно:</b> сегменты не изолированы друг от друга. Один и тот же человек в моменте решения может сравнивать зарубежную и российскую недвижимость напрямую («Таиланд, Пятигорск, Агой или коммерция Москвы?») — контент не должен жёстко разводить эти темы по разным читателям.</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section id="rubrics">
+    <h2><span class="num">05</span> Аудит текущих рубрик</h2>
+
+    <h3>Для инвесторов</h3>
+    <table>
+      <tr><th>Рубрика</th><th>Что закрывает</th></tr>
+      <tr><td>#mipif_новости</td><td>Тревога «не пропустил ли что-то важное»</td></tr>
+      <tr><td>#mipif_дайджест</td><td>Ритуал регулярного касания с каналом (пятница)</td></tr>
+      <tr><td>#mipif_аналитика</td><td>«А какая тут реальная доходность» — сравнение вариантов</td></tr>
+      <tr><td>#MIPIF_ПОЛЕЗНОЕ</td><td>Базовые бытовые страхи (напр. запрет на выезд)</td></tr>
+      <tr><td>#mipif_эфир</td><td>Главный инструмент снятия «а не обманут ли меня»</td></tr>
+      <tr><td>#mipif_юмор</td><td>Лояльность и охват, не прямая конверсия</td></tr>
+      <tr><td>#mipifkireev / блог Саватеева</td><td>Доверие через личный голос, а не компанию</td></tr>
+    </table>
+
+    <h3>На двойную аудиторию (инвестор + экспонент)</h3>
+    <table>
+      <tr><th>Рубрика</th><th>Что закрывает</th></tr>
+      <tr><td>#mipif_выставка</td><td>Витрина товара для инвестора + PR для экспонента</td></tr>
+      <tr><td>#mipif_партнёры</td><td>Практическая польза + соцдоказательство для партнёра</td></tr>
+      <tr><td>Посты «рекорд посещаемости»</td><td>Одновременно грев инвестора и продажа стендов</td></tr>
+    </table>
+  </section>
+
+  <hr class="divider">
+
+  <section id="matrix">
+    <h2><span class="num">06</span> Матрица покрытия воронки</h2>
+    <p>По строкам — этапы пути частного инвестора, по столбцам — существующие рубрики. Цвет ячейки показывает, насколько сильно рубрика закрывает этап.</p>
+
+    <div class="legend">
+      <span><span class="dot strong"></span> закрыто сильно</span>
+      <span><span class="dot weak"></span> закрыто слабо / точечно</span>
+      <span><span class="dot gap"></span> разрыв</span>
+    </div>
+
+    <div class="matrix-wrap">
+    <table class="matrix">
+      <tr>
+        <th style="text-align:left;">Этап воронки</th>
+        <th>Новости</th>
+        <th>Дайджест</th>
+        <th>Аналитика</th>
+        <th>Полезное</th>
+        <th>Эфир</th>
+        <th>Юмор</th>
+        <th>Личный голос</th>
+      </tr>
+      <tr>
+        <td class="stage-label">1. Не думал → заинтересовался</td>
+        <td><span class="cell gap">—</span></td>
+        <td><span class="cell gap">—</span></td>
+        <td><span class="cell gap">—</span></td>
+        <td><span class="cell weak">слабо</span></td>
+        <td><span class="cell gap">—</span></td>
+        <td><span class="cell weak">слабо</span></td>
+        <td><span class="cell weak">точечно</span></td>
+      </tr>
+      <tr>
+        <td class="stage-label">2. Сравнивает варианты</td>
+        <td><span class="cell strong">сильно</span></td>
+        <td><span class="cell strong">сильно</span></td>
+        <td><span class="cell strong">сильно</span></td>
+        <td><span class="cell na">—</span></td>
+        <td><span class="cell strong">сильно</span></td>
+        <td><span class="cell na">—</span></td>
+        <td><span class="cell na">—</span></td>
+      </tr>
+      <tr>
+        <td class="stage-label">3. Готов, но тормозит</td>
+        <td><span class="cell weak">точечно</span></td>
+        <td><span class="cell na">—</span></td>
+        <td><span class="cell weak">точечно</span></td>
+        <td><span class="cell strong">сильно</span></td>
+        <td><span class="cell strong">сильно</span></td>
+        <td><span class="cell na">—</span></td>
+        <td><span class="cell weak">точечно</span></td>
+      </tr>
+      <tr>
+        <td class="stage-label">4. Уже купил</td>
+        <td><span class="cell weak">точечно</span></td>
+        <td><span class="cell gap">—</span></td>
+        <td><span class="cell gap">—</span></td>
+        <td><span class="cell gap">—</span></td>
+        <td><span class="cell weak">точечно</span></td>
+        <td><span class="cell na">—</span></td>
+        <td><span class="cell gap">—</span></td>
+      </tr>
+      <tr>
+        <td class="stage-label">5. Адвокат / повторная покупка</td>
+        <td><span class="cell gap">—</span></td>
+        <td><span class="cell gap">—</span></td>
+        <td><span class="cell gap">—</span></td>
+        <td><span class="cell gap">—</span></td>
+        <td><span class="cell gap">—</span></td>
+        <td><span class="cell gap">—</span></td>
+        <td><span class="cell weak">точечно</span></td>
+      </tr>
+    </table>
+    </div>
+
+    <div class="callout orange">
+      <div class="emoji">⚠️</div>
+      <p>Три сквозных разрыва: <b>этап 1</b> (вход для новичков), <b>этап 4</b> (жизнь после покупки) и <b>этап 5</b> (соцдоказательство от равного, не от эксперта/продавца).</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section id="recs">
+    <h2><span class="num">07</span> Рекомендации</h2>
+    <table>
+      <tr><th>Рекомендация</th><th>Какой разрыв закрывает</th><th>Усилия</th><th>Приоритет</th></tr>
+      <tr>
+        <td>Рубрика «с нуля» для новичков — простой язык, без freehold/CRS/комплаенса без объяснений</td>
+        <td>Этап 1</td>
+        <td><span class="tag med">средние</span></td>
+        <td><span class="tag high">высокий</span></td>
+      </tr>
+      <tr>
+        <td>Рубрика «после покупки» — тот же инфоповод, что и в новостях, но с ракурсом «что делать, если у вас уже есть объект»</td>
+        <td>Этап 4</td>
+        <td><span class="tag low">низкие</span></td>
+        <td><span class="tag high">высокий</span></td>
+      </tr>
+      <tr>
+        <td>Агрегированный отклик гостей выставки — короткие анонимные цитаты «что было полезным», без привязки к личности</td>
+        <td>Этап 5</td>
+        <td><span class="tag med">средние</span></td>
+        <td><span class="tag high">высокий</span></td>
+      </tr>
+      <tr>
+        <td>Больше контента для экспонентов только в период продажи стендов (4–6 недель до выставки), а не круглый год</td>
+        <td>Монетизация каналом (стенды)</td>
+        <td><span class="tag low">низкие</span></td>
+        <td><span class="tag med">средний</span></td>
+      </tr>
+      <tr>
+        <td>Соцдоказательство для экспонентов без раскрытия точных лидов/сделок — цитаты постфактум, агрегированные метрики выставки, «возвращающийся экспонент»</td>
+        <td>Продажа стендов</td>
+        <td><span class="tag low">низкие</span></td>
+        <td><span class="tag med">средний</span></td>
+      </tr>
+    </table>
+  </section>
+
+  <hr class="divider">
+
+  <section id="example">
+    <h2><span class="num">08</span> Пример применения — рубрика «после покупки»</h2>
+    <p>Один и тот же инфоповод (реальный, из канала: Турция открыла ВНЖ почти во всех районах) можно подать двум разным читателям.</p>
+
+    <div class="example-post">
+      <div class="post-tag">Как сейчас — для всех</div>
+      <p><b>🇹🇷 Турция открыла для ВНЖ почти все районы.</b><br>
+      С конца прошлой недели иностранцы могут подаваться на ВНЖ из любой точки страны... Главный вопрос сейчас — что делать с теми, кто купил недвижимость дешевле $200 000 в предыдущие годы?</p>
+    </div>
+
+    <div class="example-post">
+      <div class="post-tag">Предлагается — рубрика «после покупки»</div>
+      <p><b>🏠 Если у вас уже есть недвижимость в Турции — это касается вас напрямую.</b><br>
+      Новые правила по ВНЖ изменили и требования к «старым» инвестициям. Если купили объект дешевле $200 000 до этих изменений — вот что важно проверить в ближайшие месяцы: [конкретные шаги].</p>
+    </div>
+
+    <p style="margin-top:14px; color:var(--text-light); font-size:14px;">Тот же факт, тот же объём работы редакции — но второй вариант явно говорит «мы не бросили вас после сделки» и открывает канал для диалога с самым дорогим по LTV сегментом аудитории.</p>
+
+    <h3 style="margin-top:32px;">Пример 2 — вход для новичков</h3>
+    <p>Разбор понятия «ВНЖ через инвестиции», который канал уже использует ежедневно, но никогда не объясняет с нуля.</p>
+
+    <div class="example-post">
+      <div class="post-tag">Как сейчас — для тех, кто уже в теме</div>
+      <p><b>🇬🇷 Что изменилось в 2026 в греческой «Золотой визе»?</b><br>
+      С 2024 года программа живёт в режиме многоуровневых ценовых зон, а в феврале 2026 года вступил в силу Закон № 5275/2026, который добавил новые опции и ужесточил контроль...</p>
+    </div>
+
+    <div class="example-post">
+      <div class="post-tag">Предлагается — рубрика «с нуля»</div>
+      <p><b>🎓 ВНЖ через инвестиции: объясняем на пальцах</b><br>
+      Часто в комментариях спрашивают — а что вообще такое «Золотая виза» и чем она отличается от обычной визы или гражданства? Разбираем по шагам: что вы получаете, сколько это стоит в среднем, что нужно проверить перед тем как выбирать страну. Никакого сложного языка — только суть для тех, кто присматривается впервые.</p>
+    </div>
+
+    <h3 style="margin-top:32px;">Пример 3 — отклик гостей выставки</h3>
+    <p>Короткие впечатления о том, что было полезным на выставке.</p>
+
+    <div class="example-post">
+      <div class="post-tag">Как сейчас — голос эксперта/партнёра</div>
+      <p><b>Наши партнёры делятся материалами с выставки</b><br>
+      Команда ARBI приезжала на MIPIF Global и решила узнать у инвесторов и гостей, в чём секрет успеха...</p>
+    </div>
+
+    <div class="example-post">
+      <div class="post-tag">Предлагается — «что говорят гости выставки»</div>
+      <p><b>Спросили гостей на выходе с выставки — что было самым полезным</b></p>
+      <p style="border-left:3px solid var(--border); padding-left:14px; margin:10px 0; color:var(--text);">
+      «Смог сравнить три страны за один день, а не разбираться неделями в интернете» — гость выставки, Москва<br><br>
+      «Наконец получил понятные ответы про налоги, а не общие фразы» — гостья выставки, Санкт-Петербург<br><br>
+      «Увидел договор своими глазами, а не только красивую презентацию» — гость выставки, Москва</p>
+      <p style="margin-top:12px;">#mipif_выставка</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section id="ads">
+    <h2><span class="num">09</span> Продвижение через Telegram Ads</h2>
+    <p>Если стоит задача увеличить приток посетителей на выставку и есть бюджет на продвижение — Telegram Ads даёт точность, которую сложно получить другими каналами: можно показывать рекламу не по общим интересам, а напрямую внутри конкретных каналов, где уже сидит нужная аудитория.</p>
+
+    <h3>Почему именно Telegram Ads</h3>
+    <div class="callout blue">
+      <div class="emoji">🎯</div>
+      <p>В Telegram сейчас много ёмких каналов именно про инвестиции в зарубежную недвижимость — с готовой, уже отобранной аудиторией. Telegram Ads позволяет таргетироваться на конкретный канал целиком, а не только на широкую категорию интересов — то есть показывать рекламу людям, которые уже читают про Дубай, Таиланд или зарубежную недвижимость в целом, вместо того чтобы охватывать случайную аудиторию по демографии.</p>
+    </div>
+
+    <h3>Примеры целевых каналов</h3>
+    <table>
+      <tr><th>Канал</th><th>Аудитория</th></tr>
+      <tr><td><a href="https://t.me/traniorealestate" target="_blank">t.me/traniorealestate</a></td><td>Широкая аудитория интересующихся зарубежной недвижимостью — общий поток</td></tr>
+      <tr><td><a href="https://t.me/prian_property" target="_blank">t.me/prian_property</a></td><td>Аудитория в процессе выбора объекта — сравнивает предложения между странами</td></tr>
+      <tr><td><a href="https://t.me/traniodubai" target="_blank">t.me/traniodubai</a></td><td>Узкая аудитория, сфокусированная на Дубае</td></tr>
+      <tr><td><a href="https://t.me/whitewilldubai" target="_blank">t.me/whitewilldubai</a></td><td>Аудитория с интересом к юридической/наследственной стороне сделок в Дубае</td></tr>
+      <tr><td><a href="https://t.me/TranioThailand" target="_blank">t.me/TranioThailand</a></td><td>Узкая аудитория, сфокусированная на Таиланде</td></tr>
+    </table>
+
+    <h3>Стратегия продвижения</h3>
+    <p>Работаем на два потока сразу — холодную и тёплую часть аудитории:</p>
+
+    <div class="toggle" open>
+      <summary>❄️ Холодная аудитория — через полезный контент</summary>
+      <div class="toggle-body">
+        <p>Трафик ведём не на подписку напрямую, а на конкретные посты, которые сразу дают пользу или закрывают боль — без призыва купить или прийти на выставку в первой же строке. Дальше человек сам изучает канал, подписывается, прогревается контентом и уже потом оставляет заявку на выставку.</p>
+      </div>
+    </div>
+
+    <div class="toggle" open>
+      <summary>🔥 Тёплая аудитория — сразу на прямой эфир</summary>
+      <div class="toggle-body">
+        <p>Часть трафика ведём напрямую на регистрацию на ближайший прямой эфир — эта аудитория уже читает нишевые каналы про недвижимость и не нуждается в дополнительном прогреве перед первым касанием. Пример посадочной страницы: анонс эфира <a href="https://t.me/mipif/6972" target="_blank">«Как заработать на недвижимости в Турции в 2026 году»</a>.</p>
+        <p style="margin-top:10px;">Здесь сразу фиксируем метрику — количество регистраций на эфир, а не только подписку. Это даёт более быстрый и измеримый KPI по сравнению с холодной веткой.</p>
+      </div>
+    </div>
+
+    <h3>Примеры постов, релевантных этой аудитории</h3>
+    <p>Для холодной ветки хорошо работают посты, которые дают пользу вне контекста конкретной сделки — сравнения, рейтинги, разборы изменений:</p>
+    <ul>
+      <li><b>Рейтинг арендной доходности по 80+ странам</b> (Global Property Guide) — универсальная тема, не привязана к одной стране</li>
+      <li><b>«Бали или Джакарта: куда ведут деньги в Индонезии»</b> — формат прямого сравнения двух вариантов</li>
+      <li><b>Разбор изменений в визовых/налоговых программах</b> (например, «Золотая виза» Греции или ВНЖ Турции) — закрывает регуляторную тревогу</li>
+      <li><b>Разбор рынка конкретной страны с цифрами</b> (Дубай, Таиланд) — показывает экспертизу без прямой продажи</li>
+    </ul>
+
+    <h3>Расчёт бюджета (оценочный)</h3>
+    <table>
+      <tr><th>Показатель</th><th>Значение</th></tr>
+      <tr><td>Бюджет в месяц</td><td>100 000 ₽</td></tr>
+      <tr><td>Новых подписчиков в месяц</td><td>~250</td></tr>
+      <tr><td>Стоимость целевого подписчика</td><td>~400 ₽</td></tr>
+    </table>
+
+    <div class="callout" style="margin-top:4px;">
+      <div class="emoji">📎</div>
+      <p style="color:var(--text-light); font-size:14.5px;">Расчёт выше — по стоимости подписчика, это базовый и наиболее просчитываемый показатель на старте. KPI по стоимости пользователя, приведённого именно на прямой эфир, — отдельная, более глубокая метрика: она зависит от конверсии подписчика в регистрацию, посещаемости эфиров и данных прошлых кампаний, которых пока нет под рукой. Такой расчёт я с удовольствием сделаю отдельно, как только будут доступны эти вводные.</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section id="roadmap">
+    <h2><span class="num">10</span> Дорожная карта развития</h2>
+    <p>Если канал ведём в большей степени для участников выставки, и есть запрос на увеличение количества целевых посетителей — дальнейшие шаги логично выстроить в такой последовательности.</p>
+
+    <div class="callout blue">
+      <div class="emoji">🎯</div>
+      <p><b>Конечный критерий успеха всей карты — не рост подписчиков сам по себе</b>, а рост качества лидов для экспонентов: регистрации на эфир и заявки на выставку. Именно это в итоге конвертируется в retention экспонентов и обоснование цены за стенд.</p>
+    </div>
+
+    <h3>Быстрые победы (без привязки к бюджету на рекламу)</h3>
+    <div class="toggle" open>
+      <summary>1️⃣ Точечно дополняем контент для незакрытых сегментов</summary>
+      <div class="toggle-body">
+        <p>Закрываем разрывы из матрицы покрытия воронки — рубрику «с нуля» для новичков и рубрику «после покупки» — чтобы расширить долю аудитории, которая доходит до регистрации на эфир и заявки на выставку, а не только до подписки. Это можно начать без каких-либо внешних вложений — только перераспределением уже существующего контент-плана.</p>
+      </div>
+    </div>
+
+    <h3>Масштабирование через платное продвижение</h3>
+    <div class="toggle" open>
+      <summary>2️⃣ Добавляем источники продвижения с промежуточной конверсией</summary>
+      <div class="toggle-body">
+        <p>Для старта — Telegram Ads. Ведём трафик на подписку с привязкой к основным KPI: количество и стоимость регистраций на эфир, количество и стоимость заявок на выставку. Подписка здесь — промежуточный шаг, а не конечная цель.</p>
+      </div>
+    </div>
+
+    <h3>Контрольная точка и календарь</h3>
+    <div class="toggle" open>
+      <summary>3️⃣ Фиксируем результативность через 2–3 месяца и принимаем решение</summary>
+      <div class="toggle-body">
+        <p>Логично привязать контрольную точку к ближайшей выставке — <b>22–23 сентября (СПб) и 26–27 сентября (Москва)</b> — чтобы решение о масштабировании принималось с запасом времени до окна активных продаж стендов, а не постфактум.</p>
+        <p style="margin-top:10px;">По итогам — три возможных пути:</p>
+        <ul>
+          <li><b>Масштабирование</b> — в том числе подключение дополнительных источников продвижения, если KPI по эфирам/заявкам подтвердились</li>
+          <li><b>Текущая стратегия с корректировками</b> — если результат неоднозначный, донастраиваем отдельные пункты (сегменты, креативы, каналы) без резкой смены курса</li>
+          <li><b>Отключение источника и пересмотр стратегии продвижения</b> — если стоимость привлечения не окупается качеством лидов для экспонентов, ищем другой канал или подход вместо простого прекращения активности</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Ориентиры для оценки результата</h3>
+    <div class="callout">
+      <div class="emoji">📐</div>
+      <p style="color:var(--text-light);">Точные пороги «масштабировать / отключить» стоит зафиксировать до старта теста — например, минимальная доля дошедших до эфира из зарегистрировавшихся, или максимально допустимая стоимость заявки на выставку. Без такого порога решение через 2–3 месяца рискует остаться вопросом ощущений, а не данных.</p>
+    </div>
+
+  </section>
+
+</div>
+</body>
+</html>

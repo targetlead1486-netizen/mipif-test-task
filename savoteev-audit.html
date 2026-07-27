@@ -2,7 +2,9 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Дмитрий Саватеев — аудит личного канала</title>
+<link rel="icon" href="mipif-logo.jpg">
 <style>
   :root{
     --bg:#ffffff;
@@ -34,6 +36,31 @@
     padding:64px 48px 120px;
   }
   .icon-title{width:56px; height:56px; border-radius:12px; object-fit:cover; border:1px solid var(--border); margin-bottom:12px; display:block;}
+  .back-link{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    font-size:13.5px;
+    font-weight:500;
+    color:var(--text-light);
+    text-decoration:none;
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:6px;
+    padding:6px 12px 6px 10px;
+    margin-bottom:32px;
+    transition:color .15s ease, border-color .15s ease;
+  }
+  .back-link:hover{color:var(--text); border-color:#D6D6D2;}
+  @media (max-width:640px){
+    .page{padding:28px 20px 72px;}
+    h1{font-size:25px;}
+    h2{font-size:19px;}
+    body{font-size:15px;}
+    table{font-size:13.5px;}
+    th,td{padding:8px 9px;}
+    .balance-label{width:120px; font-size:13px;}
+  }
 
   h1{
     font-size:34px;
@@ -205,6 +232,8 @@
 </head>
 <body>
 <div class="page">
+
+  <a class="back-link" href="index.html">← К списку документов</a>
 
   <img class="icon-title" src="savoteev-photo.jpg" alt="Дмитрий Саватеев">
   <h1>Дмитрий Саватеев — аудит личного канала</h1>

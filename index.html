@@ -127,9 +127,14 @@
     transform:translateY(-4px);
     box-shadow:0 18px 40px rgba(11,45,72,0.14);
   }
-  .card .icon{
-    font-size:34px;
+  .card .icon-img{
+    width:52px;
+    height:52px;
+    border-radius:12px;
+    object-fit:cover;
     margin-bottom:16px;
+    border:1px solid var(--border);
+    display:block;
   }
   .card .tag{
     display:inline-flex;
@@ -192,8 +197,6 @@
   .btn:active{transform:scale(0.98);}
   .card.mipif .btn{background:var(--navy); color:#fff;}
   .card.savoteev .btn{background:var(--blue-tx); color:#fff;}
-  .btn .arrow{transition:transform .15s ease;}
-  .btn:hover .arrow{transform:translateX(3px);}
 
   .footer{
     text-align:center;
@@ -214,7 +217,7 @@
 <body>
 
   <div class="hero">
-    <div class="eyebrow">✦ Тестовое задание</div>
+    <div class="eyebrow">Тестовое задание</div>
     <h1>Для MIPIF · <span class="name">Максим Денисов</span></h1>
     <p class="sub">Аудит контент-стратегии и рекомендации для двух Telegram-каналов. Ниже — оба документа, каждый открывается в отдельной вкладке.</p>
   </div>
@@ -223,7 +226,7 @@
     <div class="cards">
 
       <div class="card mipif">
-        <div class="icon">📊</div>
+        <img class="icon-img" src="mipif-logo.jpg" alt="MIPIF">
         <span class="tag">Канал MIPIF</span>
         <h2>Стратегия развития канала MIPIF</h2>
         <p class="desc">Аудит контент-модели, разрывы в воронке аудитории и точечные рекомендации по их закрытию.</p>
@@ -232,11 +235,11 @@
           <li>Матрица покрытия воронки по рубрикам</li>
           <li>Продвижение через Telegram Ads и дорожная карта</li>
         </ul>
-        <a class="btn" href="mipif-audit.html" target="_blank" rel="noopener">Открыть аудит <span class="arrow">→</span></a>
+        <a class="btn" href="mipif-audit.html" target="_blank" rel="noopener">Открыть аудит</a>
       </div>
 
       <div class="card savoteev">
-        <div class="icon">🧑‍💼</div>
+        <img class="icon-img" src="savoteev-photo.jpg" alt="Дмитрий Саватеев">
         <span class="tag">Личный канал</span>
         <h2>Аудит канала Дмитрия Саватеева</h2>
         <p class="desc">Разбор личного канала основателя MIPIF — позиционирование, форматы и рекомендации по контенту.</p>
@@ -245,7 +248,7 @@
           <li>Роль личного голоса в доверии к MIPIF</li>
           <li>Рекомендации по развитию</li>
         </ul>
-        <a class="btn" href="savoteev-audit.html" target="_blank" rel="noopener">Открыть аудит <span class="arrow">→</span></a>
+        <a class="btn" href="savoteev-audit.html" target="_blank" rel="noopener">Открыть аудит</a>
       </div>
 
     </div>
